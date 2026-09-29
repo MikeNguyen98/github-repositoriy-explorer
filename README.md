@@ -17,7 +17,9 @@ A simple GitHub Repository Explorer built with React and TypeScript.
 I researched the GitHub REST API and use three main endpoints:
 
 - `GET /users/{username}` — get user information
-- `GET /users/{username}/repos` — get repositories with pagination and sorting
+- `GET /users/{username}/repos` — get repositories with pagination and sorting 
+    this is main api where we search for user repo and show
+    the problem is that it not filter by name and do not return count so that we can pagination by number, only Prev and Next. I count next page by length of data and page limit. This leading a bug in pagination navigation. 
 - `GET /repos/{owner}/{repo}` — get repository details
 
 ## Tech Stack
@@ -51,3 +53,8 @@ Tests are written with Vitest and cover the main flow from searching for a user 
 ```bash
 pnpm install
 pnpm dev
+
+
+## Suggestion improvements
+- Save the search history for users.
+- Use the GitHub Search Repositories API https://api.github.com/search/repositories to support filtering by repository name and other criteria.
