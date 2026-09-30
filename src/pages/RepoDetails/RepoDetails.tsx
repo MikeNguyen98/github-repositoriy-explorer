@@ -1,26 +1,54 @@
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Spinner } from "@/components/ui/spinner";
 import { useRepo } from "@/features/repos/useRepos";
-import { CalendarDays, CircleDot, GitFork, Link2, Star } from "lucide-react";
+import {
+  AlertCircleIcon,
+  CalendarDays,
+  CircleDot,
+  GitFork,
+  Link2,
+  Star,
+} from "lucide-react";
 import { Link, useParams } from "react-router";
 import NotFound from "../NotFound";
 
 const RepoDetails = () => {
-  const params = useParams();
-  console.log(params);
-  const { username = "", repo = "" } = params;
-  const { data } = useRepo({ username, reponame: repo });
+  const { username = "", repo = "" } = useParams();
+  const { data, isLoading, isError, error } = useRepo({
+    username,
+    reponame: repo,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (isError && error.status !== 404) {
+    return (
+      <Alert variant="destructive" className="max-w-md">
+        <AlertCircleIcon />
+        <AlertTitle>Error: {error.status}</AlertTitle>
+        <AlertDescription>{error.message}</AlertDescription>
+      </Alert>
+    );
+  }
 
   if (!data) return <NotFound />;
 
   return (
-    <div className="animate-fade-up rounded-2xl border border-border bg-card p-6">
-      <div className="flex flex-col gap-6 flex-row items-start">
+    <div className="animate-in fade-in slide-in-from-bottom-2 rounded-2xl border bg-card p-6 text-start">
+      <div className="flex flex-col items-start gap-6 sm:flex-row">
         <img
           src={data.owner.avatar_url}
-          alt={data.name}
-          className="size-24 rounded-2xl border border-border"
+          alt={data.owner.login}
+          className="size-24 rounded-2xl border"
         />
         <div className="min-w-0">
-          <div className="flex flex-col items-baseline">
+          <div className="flex flex-col">
             <div className="text-xl font-bold">{data.name}</div>
             <Link
               to={data.html_url}
@@ -28,10 +56,10 @@ const RepoDetails = () => {
               rel="noreferrer"
               className="text-primary hover:underline"
             >
-              @{data.name}
+              {data.full_name}
             </Link>
           </div>
-          <p className="mt-2 text-start text-muted-foreground">
+          <p className="mt-2 text-muted-foreground">
             {data.description ?? "No description provided."}
           </p>
           <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted-foreground">
@@ -46,11 +74,11 @@ const RepoDetails = () => {
               </Link>
             )}
             <span className="inline-flex items-center gap-1.5">
-              <CalendarDays className="size-4" /> Joined{" "}
+              <CalendarDays className="size-4" /> Created{" "}
               {new Date(data.created_at).getFullYear()}
             </span>
           </div>
-            
+
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1">
               <Star className="size-3.5" />{" "}

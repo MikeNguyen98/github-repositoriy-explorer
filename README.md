@@ -7,20 +7,23 @@ A simple GitHub Repository Explorer built with React and TypeScript.
 - Search GitHub users
 - View user repositories
 - Previous / Next pagination
-- Sort repositories by last updated
+- Sort repositories by stars, forks, last pushed or name (asc / desc)
 - View repository details
 - Loading, error and empty states
 - Responsive UI
 
 ## GitHub API
 
-I researched the GitHub REST API and use three main endpoints:
+- `GET /users/{username}` — user information
+- `GET /users/{username}/repos` — repositories sorted by last pushed or name.
+  This endpoint only supports `sort=created|updated|pushed|full_name` and silently
+  ignores other values, so it cannot sort by stars or forks.
+- `GET /search/repositories?q=user:{username} fork:true` — repositories sorted by stars or forks.
+  Note: unauthenticated Search API calls are limited to 10 requests/minute.
+- `GET /repos/{owner}/{repo}` — repository details
 
-- `GET /users/{username}` — get user information
-- `GET /users/{username}/repos` — get repositories with pagination and sorting 
-    this is main api where we search for user repo and show
-    the problem is that it not filter by name and do not return count so that we can pagination by number, only Prev and Next. I count next page by length of data and page limit. This leading a bug in pagination navigation. 
-- `GET /repos/{owner}/{repo}` — get repository details
+Neither list endpoint returns a total count, so pagination is Prev / Next only.
+"Next" is enabled when the response `Link` header contains `rel="next"`.
 
 ## Tech Stack
 
@@ -53,7 +56,8 @@ Tests are written with Vitest and cover the main flow from searching for a user 
 ```bash
 pnpm install
 pnpm dev
-
+pnpm test
+```
 
 ## Suggestion improvements
 - Save the search history for users.

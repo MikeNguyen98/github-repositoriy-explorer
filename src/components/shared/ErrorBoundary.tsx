@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { Button } from "../ui/button";
 
 interface Props {
   /** Named so the fallback can say which part failed rather than blanking the page. */
@@ -32,14 +33,14 @@ export class ErrorBoundary extends Component<Props, State> {
     if (!error) return this.props.children;
 
     return (
-      <div className="panel">
-        <h2>{this.props.area}</h2>
-        <div className="issue block">
+      <div className="flex flex-col items-center gap-3 p-6">
+        <h2 className="text-lg font-semibold">{this.props.area}</h2>
+        <p className="text-sm text-destructive">
           This panel stopped working: {error.message}
-        </div>
-        <button onClick={() => this.setState({ error: null })}>
+        </p>
+        <Button variant="outline" onClick={() => this.setState({ error: null })}>
           Try again
-        </button>
+        </Button>
       </div>
     );
   }

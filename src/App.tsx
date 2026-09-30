@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import "./App.css";
 import { Fallback } from "./pages";
 import Router from "./router";
 import { QueryClientProvider } from "@tanstack/react-query";

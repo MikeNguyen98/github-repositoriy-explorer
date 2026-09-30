@@ -27,7 +27,7 @@ api.interceptors.response.use(
     let message = error.response?.data?.message ?? error.message;
 
     if (!error.response) message = "Cannot connect to GitHub API";
-    else if (status === 404) message = "User not found";
+    else if (status === 404) message = "Not found";
     else if (
       (status === 403 || status === 429) &&
       error.response.headers["x-ratelimit-remaining"] === "0"

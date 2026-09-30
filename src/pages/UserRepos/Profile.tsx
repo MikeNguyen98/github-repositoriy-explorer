@@ -4,15 +4,15 @@ import { Link } from "react-router";
 
 const Profile = ({ user }: { user: GitHubUser }) => {
   return (
-    <div className="animate-fade-up rounded-2xl border border-border bg-card p-6">
-      <div className="flex flex-col gap-6 flex-row items-start">
+    <div className="animate-in fade-in slide-in-from-bottom-2 rounded-2xl border bg-card p-6 text-start">
+      <div className="flex flex-col items-start gap-6 sm:flex-row">
         <img
           src={user.avatar_url}
           alt={user.login}
-          className="size-24 rounded-2xl border border-border"
+          className="size-24 rounded-2xl border"
         />
         <div className="min-w-0">
-          <div className="flex flex-col items-baseline">
+          <div className="flex flex-col">
             <div className="text-xl font-bold">{user.name ?? user.login}</div>
             <Link
               to={user.html_url}
@@ -23,7 +23,7 @@ const Profile = ({ user }: { user: GitHubUser }) => {
               @{user.login}
             </Link>
           </div>
-          {user.bio && <p className="mt-2 text-start text-muted-foreground">{user.bio}</p>}
+          {user.bio && <p className="mt-2 text-muted-foreground">{user.bio}</p>}
           <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted-foreground">
             {user.company && (
               <span className="inline-flex items-center gap-1.5">
@@ -63,7 +63,7 @@ const Profile = ({ user }: { user: GitHubUser }) => {
         ].map(({ icon: Icon, label, value }) => (
           <div
             key={label}
-            className="rounded-xl border border-border bg-secondary/50 p-4 text-center"
+            className="rounded-xl border bg-secondary/50 p-4 text-center"
           >
             <Icon className="mx-auto size-4 text-primary" />
             <div className="mt-1 text-xl font-bold">{value.toLocaleString()}</div>

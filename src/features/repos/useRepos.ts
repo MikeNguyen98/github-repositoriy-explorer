@@ -10,7 +10,7 @@ export const useRepos = (props: {
   useQuery({
     queryKey: ["repos", props],
     queryFn: ({ signal }) => githubService.getUserRepos(props, signal),
-    enabled: !!props,
+    enabled: !!props.username,
     placeholderData: keepPreviousData,
   });
 
@@ -27,5 +27,4 @@ export const useRepo = (props: { username: string; reponame: string }) =>
     queryKey: ["user", "repo", props],
     queryFn: ({ signal }) => githubService.getRepoOfUser(props, signal),
     enabled: !!props.username && !!props.reponame,
-    placeholderData: keepPreviousData,
   });

@@ -14,8 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Spinner } from "@/components/ui/spinner";
 import { useGitUser, useRepos } from "@/features/repos/useRepos";
+import { PER_PAGE } from "@/services/github";
 import { useParams } from "react-router";
 import {
   createEnumParam,
@@ -29,6 +29,7 @@ import Repos from "./Repos";
 import { ProfileSkeleton, ReposSkeleton } from "./UserReposSkeletons";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
+import { cn } from "cn";
 
 const SORT_KEYS: SortKey[] = ["stars", "updated", "name", "forks"];
 const DIRECTIONS: SortDirection[] = ["desc", "asc"];
@@ -46,8 +47,6 @@ const paramConfig = {
   page: withDefault(NumberParam, 1),
 };
 
-const PER_PAGE = 10;
-
 function UserRepos() {
   const { username = "" } = useParams();
   const [params, setParams] = useQueryParams(paramConfig);
@@ -61,7 +60,7 @@ function UserRepos() {
   } = useGitUser(username);
 
   const {
-    data: repos,
+    data,
     isLoading,
     isFetching,
     isError,
@@ -73,23 +72,25 @@ function UserRepos() {
     direction: params.direction,
   });
 
-  const hasNext = (repos?.length ?? 0) === PER_PAGE;
+  const repos = data?.items;
+  const hasNext = data?.hasNext ?? false;
 
-  if (isUserLoading || isLoading) {
+  if (isUserLoading) {
     return (
-      <div className="flex w-full h-full items-center gap-4">
-        <Spinner />
+      <div className="flex flex-col gap-4">
+        <ProfileSkeleton />
+        <ReposSkeleton count={PER_PAGE} />
       </div>
     );
   }
 
   if (isUserError) {
-    const status = (userError as { status?: number }).status;
+    const { status } = userError;
     if (status === 404) return <NotFound />;
     return (
       <Alert variant="destructive" className="max-w-md">
         <AlertCircleIcon />
-        <AlertTitle>Error: {status} </AlertTitle>
+        <AlertTitle>Error: {status}</AlertTitle>
         <AlertDescription>{userError.message}</AlertDescription>
       </Alert>
     );
@@ -99,10 +100,10 @@ function UserRepos() {
   return (
     <>
       <div className="flex flex-col gap-4">
-        {user ? <Profile user={user} /> : <ProfileSkeleton />}
+        <Profile user={user} />
 
-        <div className="flex flex-row gap-2 items-center">
-          Filter:
+        <div className="flex items-center gap-2">
+          Sort by:
           <Select
             items={itemsSortKey}
             value={params.sort}
@@ -110,7 +111,7 @@ function UserRepos() {
               setParams({ sort: v as SortKey, page: undefined }, "replaceIn")
             }
           >
-            <SelectTrigger className="min-w-[180px]">
+            <SelectTrigger className="min-w-45">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -146,11 +147,7 @@ function UserRepos() {
         {!!repos?.length && (
           <div
             aria-busy={isFetching}
-            className={
-              isFetching
-                ? "opacity-60 transition-opacity"
-                : "transition-opacity"
-            }
+            className={cn("transition-opacity", isFetching && "opacity-60")}
           >
             <Repos data={repos} />
           </div>
@@ -162,14 +159,14 @@ function UserRepos() {
           <PaginationItem>
             <PaginationPrevious
               aria-disabled={page <= 1}
-              className={page <= 1 ? "pointer-events-none opacity-50" : ""}
+              className={cn(page <= 1 && "pointer-events-none opacity-50")}
               onClick={() => setParams({ page: page - 1 }, "pushIn")}
             />
           </PaginationItem>
           <PaginationItem>
             <PaginationNext
               aria-disabled={!hasNext}
-              className={!hasNext ? "pointer-events-none opacity-50" : ""}
+              className={cn(!hasNext && "pointer-events-none opacity-50")}
               onClick={() => setParams({ page: page + 1 }, "pushIn")}
             />
           </PaginationItem>

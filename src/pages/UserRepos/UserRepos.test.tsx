@@ -94,10 +94,13 @@ beforeEach(() => {
         }) as never);
 
   mockedUseRepos.mockImplementation((({ username }: { username: string }) => ({
-    data: [
-      { id: 1, name: `${username}-repo-1` },
-      { id: 2, name: `${username}-repo-2` },
-    ],
+    data: {
+      items: [
+        { id: 1, name: `${username}-repo-1` },
+        { id: 2, name: `${username}-repo-2` },
+      ],
+      hasNext: false,
+    },
     isLoading: false,
     isFetching: false,
     isError: false,

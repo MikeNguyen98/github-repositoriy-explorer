@@ -1,6 +1,6 @@
 import type { GitHubRepo } from "@/features/repos/types";
 import { timeAgo } from "@/libs/utils";
-import { CircleDot, ExternalLink, GitFork, Star } from "lucide-react";
+import { CircleDot, GitFork, Star } from "lucide-react";
 import React from "react";
 import { Link } from "react-router";
 
@@ -22,20 +22,17 @@ const LANG_COLORS: Record<string, string> = {
 
 const Repos = React.memo(({ data }: { data: GitHubRepo[] }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       {data.map((repo) => (
         <Link
+          key={repo.id}
           to={`/users/${repo.owner.login}/${repo.name}`}
-          rel="noreferrer"
-          className="card-hover group flex flex-col rounded-xl border border-border bg-card p-5"
+          className="group flex flex-col rounded-xl border bg-card p-5 text-start transition-shadow hover:shadow-md"
         >
-          <div className="flex items-start justify-between gap-3">
-            <h3 className="font-semibold text-primary group-hover:underline">
-              {repo.name}
-            </h3>
-            <ExternalLink className="size-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
-          </div>
-          <p className="mt-2 text-start line-clamp-2 flex-1 text-sm text-muted-foreground">
+          <h3 className="font-semibold text-primary group-hover:underline">
+            {repo.name}
+          </h3>
+          <p className="mt-2 line-clamp-2 flex-1 text-sm text-muted-foreground">
             {repo.description ?? "No description provided."}
           </p>
           {repo.topics.length > 0 && (

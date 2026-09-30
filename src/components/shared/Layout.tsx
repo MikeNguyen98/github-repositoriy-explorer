@@ -13,7 +13,6 @@ import { Link, useParams } from "react-router";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const params = useParams();
-  console.log(params);
   return (
     <div className="w-full flex flex-col py-6 px-8 gap-4">
       <div className="flex flex-row justify-between items-center">
