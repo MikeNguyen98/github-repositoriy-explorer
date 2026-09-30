@@ -1,8 +1,8 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
-import { Button } from "../ui/button";
+import { ErrorState } from "./ErrorState";
 
 interface Props {
-  /** Named so the fallback can say which part failed rather than blanking the page. */
+  /** Changing it resets the boundary, e.g. the current route. */
   area: string;
   children: ReactNode;
 }
@@ -33,14 +33,12 @@ export class ErrorBoundary extends Component<Props, State> {
     if (!error) return this.props.children;
 
     return (
-      <div className="flex flex-col items-center gap-3 p-6">
-        <h2 className="text-lg font-semibold">{this.props.area}</h2>
-        <p className="text-sm text-destructive">
-          This panel stopped working: {error.message}
-        </p>
-        <Button variant="outline" onClick={() => this.setState({ error: null })}>
-          Try again
-        </Button>
+      <div className="mx-auto max-w-xl px-4 py-16">
+        <ErrorState
+          title="Something went wrong"
+          message={error.message}
+          onRetry={() => this.setState({ error: null })}
+        />
       </div>
     );
   }
