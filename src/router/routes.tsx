@@ -1,33 +1,28 @@
-import { Routes, Route, BrowserRouter, Navigate } from "react-router";
-import * as routePath from "./paths";
-import * as routePage from "../pages";
-import React from "react";
-import { QueryParamProvider } from "use-query-params";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { ReactRouter7Adapter } from "@/libs/ReactRouter7Adapter";
-import Layout from "@/components/shared/Layout";
+import { lazy } from "react";
+import { BrowserRouter, Route, Routes } from "react-router";
+import { QueryParamProvider } from "use-query-params";
+import * as paths from "./paths";
 
-const RouteContainer = () => (
-  <React.Fragment>
+const Home = lazy(() => import("@/pages/Home"));
+const UserPage = lazy(() => import("@/pages/user/UserPage"));
+const RepoPage = lazy(() => import("@/pages/repo/RepoPage"));
+const NotFound = lazy(() => import("@/pages/NotFound"));
+
+export default function Router() {
+  return (
     <BrowserRouter>
       <QueryParamProvider adapter={ReactRouter7Adapter}>
         <Routes>
-          <Route path={routePath.APP_HOME} element={<routePage.Home />} />
-          <Route
-            path="*"
-            element={<Navigate to={routePath.APP_HOME} replace />}
-          />
-          <Route
-            path={routePath.APP_USER_REPOS}
-            element={<Layout children={<routePage.UserRepos />}/>}
-          />
-          <Route
-            path={routePath.APP_REPO_DETAILS}
-            element={<Layout children={<routePage.RepoDetails />}/>}
-          />
+          <Route element={<AppLayout />}>
+            <Route path={paths.HOME} element={<Home />} />
+            <Route path={paths.USER} element={<UserPage />} />
+            <Route path={paths.REPO} element={<RepoPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
         </Routes>
       </QueryParamProvider>
     </BrowserRouter>
-  </React.Fragment>
-);
-
-export default RouteContainer;
+  );
+}
